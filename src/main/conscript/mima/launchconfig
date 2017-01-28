@@ -1,0 +1,10 @@
+[app]
+  version: 0.1.0
+  org: com.github.xuwei-k
+  name: mima
+  class: mima.App
+[scala]
+  version: 2.10.6
+[repositories]
+  local
+  maven-central
