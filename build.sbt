@@ -97,5 +97,9 @@ updateLaunchconfig := {
     |""".stripMargin
   val f = (baseDirectory in ThisBuild).value / "src/main/conscript/mima/launchconfig"
   IO.write(f, launchconfig)
+  val git = new sbtrelease.Git((baseDirectory in LocalRootProject).value)
+  val s = streams.value.log
+  git.add(f.getCanonicalPath) ! s
+  git.commit(message = "update launchconfig", sign = false) ! s
   f
 }
