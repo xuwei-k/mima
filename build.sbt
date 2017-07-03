@@ -25,6 +25,17 @@ pomExtra :=
 enablePlugins(ConscriptPlugin)
 
 val updateLaunchconfig = TaskKey[File]("updateLaunchconfig")
+val launchconfigFile = file("src/main/conscript/mima/launchconfig")
+
+TaskKey[Int]("testConscript") := Def
+  .sequential(
+    updateLaunchconfig,
+    csRun.toTask(" mima org.scalaz scalaz-core_2.11 7.1.0 7.1.1"),
+    Def.task {
+      s"git checkout ${launchconfigFile}".!
+    }
+  )
+  .value
 
 val tagName = Def.setting {
   s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
@@ -93,11 +104,10 @@ updateLaunchconfig := {
     |  local
     |  maven-central
     |""".stripMargin
-  val f = (baseDirectory in ThisBuild).value / "src/main/conscript/mima/launchconfig"
-  IO.write(f, launchconfig)
+  IO.write(launchconfigFile, launchconfig)
   val git = new sbtrelease.Git((baseDirectory in LocalRootProject).value)
   val s = streams.value.log
-  git.add(f.getCanonicalPath) ! s
+  git.add(launchconfigFile.getCanonicalPath) ! s
   git.commit(message = "update launchconfig", sign = false) ! s
-  f
+  launchconfigFile
 }
