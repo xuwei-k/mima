@@ -1,9 +1,11 @@
 name := "mima"
 
+scalaVersion := "2.12.2"
+
 libraryDependencies ++= Seq(
-  "com.typesafe" %% "mima-reporter" % "0.1.14",
+  "com.typesafe" %% "mima-reporter" % "0.1.15",
   "org.scalaj" %% "scalaj-http" % "2.3.0",
-  "org.scala-sbt" %% "io" % "1.0.0-M11"
+  "org.scala-sbt" %% "io" % "1.0.0-M13"
 )
 
 organization := "com.github.xuwei-k"
