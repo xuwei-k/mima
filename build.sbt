@@ -5,7 +5,7 @@ scalaVersion := "2.12.3"
 libraryDependencies ++= Seq(
   "com.typesafe" %% "mima-reporter" % "0.1.17",
   "org.scalaj" %% "scalaj-http" % "2.3.0",
-  "org.scala-sbt" %% "io" % "1.0.0-RC3"
+  "org.scala-sbt" %% "io" % "1.0.0"
 )
 
 organization := "com.github.xuwei-k"
