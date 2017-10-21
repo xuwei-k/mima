@@ -1,11 +1,11 @@
 name := "mima"
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.4"
 
 libraryDependencies ++= Seq(
-  "com.typesafe" %% "mima-reporter" % "0.1.17",
+  "com.typesafe" %% "mima-reporter" % "0.1.18",
   "org.scalaj" %% "scalaj-http" % "2.3.0",
-  "org.scala-sbt" %% "io" % "1.0.0"
+  "org.scala-sbt" %% "io" % "1.1.0"
 )
 
 organization := "com.github.xuwei-k"
@@ -24,6 +24,13 @@ pomExtra :=
     </developer>
   </developers>
 
+publishTo := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
+)
+
 enablePlugins(ConscriptPlugin)
 
 val updateLaunchconfig = TaskKey[File]("updateLaunchconfig")
@@ -34,7 +41,7 @@ TaskKey[Int]("testConscript") := Def
     updateLaunchconfig,
     csRun.toTask(" mima org.scalaz scalaz-core_2.11 7.1.0 7.1.1"),
     Def.task {
-      s"git checkout ${launchconfigFile}".!
+      sys.process.Process(s"git checkout ${launchconfigFile}").!
     }
   )
   .value
@@ -44,7 +51,7 @@ val tagName = Def.setting {
 }
 
 val tagOrHash = Def.setting {
-  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lines_!.head
+  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lineStream_!.head
   else tagName.value
 }
 
@@ -83,10 +90,10 @@ releaseProcess := Seq[ReleaseStep](
   releaseStepTask(updateLaunchconfig),
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(action = Command.process("publishSigned", _)),
+  releaseStepCommand("publishSigned"),
   setNextVersion,
   commitNextVersion,
-  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  releaseStepCommand("sonatypeReleaseAll"),
   pushChanges
 )
 

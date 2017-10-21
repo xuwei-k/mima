@@ -8,6 +8,6 @@ cache:
 script:
 - git config core.whitespace tab-in-indent,trailing-space,blank-at-eol
 - git show --oneline --check
-- sbt scalafmtTest test
+- sbt scalafmt sbt:scalafmt test:scalafmt test
 - find $HOME/.sbt -name "*.lock" | xargs rm
 - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
