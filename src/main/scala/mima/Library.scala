@@ -6,6 +6,7 @@ final case class Library(groupId: String, artifactId: String, version: String) {
     val g = groupId.replace('.', '/')
     s"${Library.MavenCentral}$g/$artifactId/$version/$name"
   }
+  override def toString = s""""${groupId}" % "${artifactId}" % "${version}""""
 }
 
 object Library {
