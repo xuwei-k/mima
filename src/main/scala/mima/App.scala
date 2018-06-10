@@ -58,7 +58,7 @@ object App {
       " * " + p.description(affected) + p.howToFilter.map("\n   filter with: " + _).getOrElse("")
     }
 
-    log.info(s"$projectName: found ${backErrors.size} potential binary incompatibilities while checking against")
+    println(s"$projectName: found ${backErrors.size} potential binary incompatibilities while checking against")
     backErrors.map { p: core.Problem =>
       prettyPrint(p, "current")
     }.foreach { p =>
