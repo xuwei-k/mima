@@ -70,8 +70,8 @@ object App {
   def runMima(previous: Library, current: Library): Int = {
     IO.withTemporaryDirectory { dir =>
       for {
-        p <- download(previous).right
-        c <- download(current).right
+        p <- download(previous)
+        c <- download(current)
       } yield {
         val p0 = new File(dir, previous.name)
         val c0 = new File(dir, current.name)
@@ -92,14 +92,23 @@ object App {
   }
 
   def download(lib: Library): Either[String, Array[Byte]] = {
-    val req = scalaj.http.Http(lib.mavenCentralURL).options(defaultOptions)
-    println(s"downloading from ${lib.mavenCentralURL}")
+    val x :: xs = lib.urls
+    xs.foldLeft(download0(x)) {
+      case (success @ Right(_), _) =>
+        success
+      case (_ @Left(_), nextURL) =>
+        download0(nextURL)
+    }
+  }
+  def download0(url: String): Either[String, Array[Byte]] = {
+    val req = scalaj.http.Http(url).options(defaultOptions)
+    println(s"downloading from ${url}")
     val res = req.asBytes
-    println("status = " + res.code + " " + lib.mavenCentralURL)
+    println(s"status = ${res.code} ${url}")
     if (res.code == 200) {
       Right(res.body)
     } else {
-      Left(s"status = ${res.code}. error while downloading ${lib.mavenCentralURL}")
+      Left(s"status = ${res.code}. error while downloading ${url}")
     }
   }
 
