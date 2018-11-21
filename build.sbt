@@ -117,6 +117,6 @@ updateLaunchconfig := {
   val git = new sbtrelease.Git((baseDirectory in LocalRootProject).value)
   val s = streams.value.log
   git.add(launchconfigFile.getCanonicalPath) ! s
-  git.commit(message = "update launchconfig", sign = false) ! s
+  git.commit(message = "update launchconfig", sign = false, signOff = false) ! s
   launchconfigFile
 }
