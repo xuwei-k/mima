@@ -1,5 +1,5 @@
 [app]
-  version: 0.1.6
+  version: 0.1.7
   org: com.github.xuwei-k
   name: mima
   class: mima.App
