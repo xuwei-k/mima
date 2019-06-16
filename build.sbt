@@ -4,7 +4,7 @@ scalaVersion := "2.12.8"
 
 libraryDependencies ++= Seq(
   "com.typesafe" %% "mima-reporter" % "0.3.0",
-  "org.scalaj" %% "scalaj-http" % "2.4.1",
+  "org.scalaj" %% "scalaj-http" % "2.4.2",
   "org.scala-sbt" %% "io" % "1.2.2"
 )
 
