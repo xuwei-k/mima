@@ -9,8 +9,9 @@ final case class Library(groupId: String, artifactId: String, version: String) {
 
   val mavenCentralURL: String = buildURL(Library.MavenCentral)
   val sonatypeStagingURL: String = buildURL(Library.SonatypeStaging)
+  val scalaSnapshotURL: String = buildURL(Library.ScalaSnapshot)
 
-  val urls: Seq[String] = mavenCentralURL :: sonatypeStagingURL :: Nil
+  val urls: Seq[String] = mavenCentralURL :: sonatypeStagingURL :: scalaSnapshotURL :: Nil
 
   override def toString = s""""${groupId}" % "${artifactId}" % "${version}""""
 }
@@ -18,4 +19,5 @@ final case class Library(groupId: String, artifactId: String, version: String) {
 object Library {
   final val MavenCentral = "https://repo1.maven.org/maven2/"
   final val SonatypeStaging = "https://oss.sonatype.org/content/repositories/staging/"
+  final val ScalaSnapshot = "https://scala-ci.typesafe.com/artifactory/scala-integration/"
 }
