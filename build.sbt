@@ -77,7 +77,6 @@ scalacOptions ++= Seq(
 )
 
 releaseTagName := tagName.value
-resolvers += Opts.resolver.sonatypeReleases
 
 import ReleaseTransformations._
 
