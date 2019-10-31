@@ -8,7 +8,6 @@ import com.typesafe.tools.mima.lib
 import com.typesafe.tools.mima.core.util.log.Logging
 
 object App {
-
   val defaultOptions: Seq[HttpOptions.HttpOption] = Seq(
     _.setConnectTimeout(60000),
     _.setReadTimeout(60000)
@@ -52,7 +51,6 @@ object App {
     log: Logging,
     projectName: String
   ): Unit = {
-
     // TODO - Line wrapping an other magikz
     def prettyPrint(p: core.Problem, affected: String): String = {
       " * " + p.description(affected) + p.howToFilter.map("\n   filter with: " + _).getOrElse("")
@@ -111,7 +109,6 @@ object App {
       Left(s"status = ${res.code}. error while downloading ${url}")
     }
   }
-
 }
 
 class App extends xsbti.AppMain {
