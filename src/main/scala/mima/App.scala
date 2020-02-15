@@ -57,11 +57,7 @@ object App {
     }
 
     println(s"$projectName: found ${backErrors.size} potential binary incompatibilities while checking against")
-    backErrors.map { p: core.Problem =>
-      prettyPrint(p, "current")
-    }.foreach { p =>
-      log.error(p)
-    }
+    backErrors.map { p: core.Problem => prettyPrint(p, "current") }.foreach { p => log.error(p) }
     if (backErrors.nonEmpty) sys.error(projectName + ": Binary compatibility check failed!")
   }
 
