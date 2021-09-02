@@ -72,8 +72,7 @@ scalacOptions ++= Seq(
   "-Xfuture",
   "-language:existentials",
   "-language:higherKinds",
-  "-language:implicitConversions",
-  "-Yno-adapted-args"
+  "-language:implicitConversions"
 )
 
 releaseTagName := tagName.value
