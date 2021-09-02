@@ -47,7 +47,7 @@ TaskKey[Int]("testConscript") := Def
   .value
 
 val tagName = Def.setting {
-  s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
+  s"v${if (releaseUseGlobalVersion.value) (ThisBuild / version).value else version.value}"
 }
 
 val tagOrHash = Def.setting {
@@ -55,11 +55,11 @@ val tagOrHash = Def.setting {
   else tagName.value
 }
 
-scalacOptions in (Compile, doc) ++= {
+(Compile / doc / scalacOptions) ++= {
   val tag = tagOrHash.value
   Seq(
     "-sourcepath",
-    (baseDirectory in LocalRootProject).value.getAbsolutePath,
+    (LocalRootProject / baseDirectory).value.getAbsolutePath,
     "-doc-source-url",
     s"https://github.com/xuwei-k/mima/tree/${tag}€{FILE_PATH}.scala"
   )
@@ -97,7 +97,7 @@ releaseProcess := Seq[ReleaseStep](
 )
 
 updateLaunchconfig := {
-  val mainClassName = (discoveredMainClasses in Compile).value match {
+  val mainClassName = (Compile / discoveredMainClasses).value match {
     case Seq(m) => m
     case zeroOrMulti => sys.error(s"could not found main class. $zeroOrMulti")
   }
@@ -113,7 +113,7 @@ updateLaunchconfig := {
     |  maven-central
     |""".stripMargin
   IO.write(launchconfigFile, launchconfig)
-  val git = new sbtrelease.Git((baseDirectory in LocalRootProject).value)
+  val git = new sbtrelease.Git((LocalRootProject / baseDirectory).value)
   val s = streams.value.log
   git.add(launchconfigFile.getCanonicalPath) ! s
   git.commit(message = "update launchconfig", sign = false, signOff = false) ! s
