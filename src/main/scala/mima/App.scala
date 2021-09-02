@@ -34,16 +34,14 @@ object App {
   }
 
   private[this] val logger = new Logging {
-    override def debugLog(str: String): Unit = {}
+    override def verbose(str: String): Unit = {}
+    override def debug(str: String): Unit = {}
     override def error(str: String): Unit = Console.err.println(str)
-    override def info(str: String): Unit = {}
     override def warn(str: String): Unit = Console.err.println(str)
   }
 
   private def makeMima(): lib.MiMaLib = {
-    core.Config.setup("conscript-mima", Array.empty)
-    val classpath = com.typesafe.tools.mima.core.reporterClassPath("")
-    new lib.MiMaLib(classpath, logger)
+    new lib.MiMaLib(Nil, logger)
   }
 
   def reportModuleErrors(
@@ -51,7 +49,6 @@ object App {
     log: Logging,
     projectName: String
   ): Unit = {
-    // TODO - Line wrapping an other magikz
     def prettyPrint(p: core.Problem, affected: String): String = {
       " * " + p.description(affected) + p.howToFilter.map("\n   filter with: " + _).getOrElse("")
     }
@@ -71,7 +68,11 @@ object App {
         val c0 = new File(dir, current.name)
         IO.write(p0, p)
         IO.write(c0, c)
-        val problems = makeMima().collectProblems(p0.getAbsolutePath, c0.getAbsolutePath)
+        val problems = makeMima().collectProblems(
+          oldJarOrDir = p0,
+          newJarOrDir = c0,
+          excludeAnnots = Nil
+        )
         reportModuleErrors(
           backErrors = problems,
           log = logger,
