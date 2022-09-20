@@ -24,11 +24,11 @@ pomExtra :=
     </developer>
   </developers>
 
-publishTo := Some(
+publishTo := (
   if (isSnapshot.value)
-    Opts.resolver.sonatypeSnapshots
+    None
   else
-    Opts.resolver.sonatypeStaging
+    Some(Opts.resolver.sonatypeStaging)
 )
 
 enablePlugins(ConscriptPlugin)
