@@ -1,17 +1,10 @@
 package mima
 
-import sbt.io.IO
-import scalaj.http._
-import java.io.File
 import com.typesafe.tools.mima.core
 import com.typesafe.tools.mima.lib
 import com.typesafe.tools.mima.core.util.log.Logging
 
 object App {
-  val defaultOptions: Seq[HttpOptions.HttpOption] = Seq(
-    _.setConnectTimeout(60000),
-    _.setReadTimeout(60000)
-  )
 
   def main(args: Array[String]): Unit = {
     run(args)
@@ -59,53 +52,23 @@ object App {
   }
 
   def runMima(previous: Library, current: Library): Int = {
-    IO.withTemporaryDirectory { dir =>
-      for {
-        p <- download(previous)
-        c <- download(current)
-      } yield {
-        val p0 = new File(dir, previous.name)
-        val c0 = new File(dir, current.name)
-        IO.write(p0, p)
-        IO.write(c0, c)
-        val problems = makeMima().collectProblems(
-          oldJarOrDir = p0,
-          newJarOrDir = c0,
-          excludeAnnots = Nil
-        )
-        reportModuleErrors(
-          backErrors = problems,
-          log = logger,
-          projectName = current.toString
-        )
-        0
-      }
-    }.left.map { error =>
-      println(error)
-      -1
-    }.merge
+    val previousFiles = previous.download()
+    println(previousFiles.map("  " + _).mkString("previous files:\n", "\n", "\n"))
+    val currentFiles = current.download()
+    println(currentFiles.map("  " + _).mkString("current files:\n", "\n", "\n"))
+    val problems = makeMima().collectProblems(
+      oldJarOrDir = previousFiles.head,
+      newJarOrDir = currentFiles.head,
+      excludeAnnots = Nil
+    )
+    reportModuleErrors(
+      backErrors = problems,
+      log = logger,
+      projectName = current.toString
+    )
+    0
   }
 
-  def download(lib: Library): Either[String, Array[Byte]] = {
-    val x :: xs = lib.urls
-    xs.foldLeft(download0(x)) {
-      case (success @ Right(_), _) =>
-        success
-      case (_ @Left(_), nextURL) =>
-        download0(nextURL)
-    }
-  }
-  def download0(url: String): Either[String, Array[Byte]] = {
-    val req = scalaj.http.Http(url).options(defaultOptions)
-    println(s"downloading from ${url}")
-    val res = req.asBytes
-    println(s"status = ${res.code} ${url}")
-    if (res.code == 200) {
-      Right(res.body)
-    } else {
-      Left(s"status = ${res.code}. error while downloading ${url}")
-    }
-  }
 }
 
 class App extends xsbti.AppMain {
