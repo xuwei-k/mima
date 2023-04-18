@@ -4,7 +4,7 @@ scalaVersion := "2.13.10"
 
 libraryDependencies ++= Seq(
   "com.typesafe" %% "mima-core" % "1.1.2",
-  "io.get-coursier" %% "coursier" % "2.1.1"
+  "io.get-coursier" %% "coursier" % "2.1.2"
 )
 
 organization := "com.github.xuwei-k"
