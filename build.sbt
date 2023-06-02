@@ -1,6 +1,6 @@
 name := "mima"
 
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.11"
 
 libraryDependencies ++= Seq(
   "com.typesafe" %% "mima-core" % "1.1.2",
