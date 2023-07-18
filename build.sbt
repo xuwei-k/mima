@@ -3,7 +3,7 @@ name := "mima"
 scalaVersion := "2.13.11"
 
 libraryDependencies ++= Seq(
-  "com.typesafe" %% "mima-core" % "1.1.2",
+  "com.typesafe" %% "mima-core" % "1.1.3",
   "io.get-coursier" %% "coursier" % "2.1.5"
 )
 
