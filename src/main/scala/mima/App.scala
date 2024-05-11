@@ -41,32 +41,52 @@ object App {
     backErrors: List[core.Problem],
     log: Logging,
     projectName: String
-  ): Unit = {
+  ): Boolean = {
     def prettyPrint(p: core.Problem, affected: String): String = {
       " * " + p.description(affected) + p.howToFilter.map("\n   filter with: " + _).getOrElse("")
     }
 
     println(s"$projectName: found ${backErrors.size} potential binary incompatibilities while checking against")
     backErrors.map { p: core.Problem => prettyPrint(p, "current") }.foreach { p => log.error(p) }
-    if (backErrors.nonEmpty) sys.error(projectName + ": Binary compatibility check failed!")
+    println()
+    backErrors.isEmpty
   }
 
   def runMima(previous: Library, current: Library): Int = {
-    val previousFiles = previous.download()
-    println(previousFiles.map("  " + _).mkString("previous files:\n", "\n", "\n"))
+    val previousFiles = previous.download().map { case (lib, f) => lib -> f }
+    println(previousFiles.map("  " + _._2).mkString("previous files:\n", "\n", "\n"))
     val currentFiles = current.download()
-    println(currentFiles.map("  " + _).mkString("current files:\n", "\n", "\n"))
-    val problems = makeMima().collectProblems(
-      oldJarOrDir = previousFiles.head,
-      newJarOrDir = currentFiles.head,
-      excludeAnnots = Nil
-    )
-    reportModuleErrors(
-      backErrors = problems,
-      log = logger,
-      projectName = current.toString
-    )
-    0
+    println(currentFiles.map("  " + _._2).mkString("current files:\n", "\n", "\n"))
+    val removed = previousFiles.filterNot(x => currentFiles.map(_._1.module).toSet.contains(x._1.module))
+    if (removed.nonEmpty) {
+      println(removed.map("  " + _._2).mkString("removed files:\n", "\n", "\n"))
+    }
+    val added = currentFiles.filterNot(x => previousFiles.map(_._1.module).toSet.contains(x._1.module))
+    if (added.nonEmpty) {
+      println(added.map("  " + _._2).mkString("new files:\n", "\n", "\n"))
+    }
+    val oldMap = previousFiles.map { case (k, v) => k.module -> (k.version -> v) }.toMap
+    val results = currentFiles.flatMap { x =>
+      oldMap.get(x._1.module).map(x -> _)
+    }.filter { case ((newLib, _), (oldVersion, _)) =>
+      newLib.version != oldVersion
+    }.map { case ((newLib, newJar), (oldVersion, oldJar)) =>
+      val problems = makeMima().collectProblems(
+        oldJarOrDir = oldJar,
+        newJarOrDir = newJar,
+        excludeAnnots = Nil
+      )
+      reportModuleErrors(
+        backErrors = problems,
+        log = logger,
+        projectName = s"${newLib.groupId} % ${newLib.artifactId} % ${oldVersion} => ${newLib.version}"
+      )
+    }
+    if (results.forall(identity)) {
+      0
+    } else {
+      sys.error("Binary compatibility check failed!")
+    }
   }
 
 }
