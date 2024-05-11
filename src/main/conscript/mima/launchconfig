@@ -1,5 +1,5 @@
 [app]
-  version: 0.3.1
+  version: 0.3.2-SNAPSHOT
   org: com.github.xuwei-k
   name: mima
   class: mima.App
