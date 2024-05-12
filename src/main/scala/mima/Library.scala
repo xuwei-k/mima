@@ -22,7 +22,7 @@ final case class Library(groupId: String, artifactId: String, version: String) {
       .detailedArtifacts
       .map(a =>
         Library(
-          groupId = a._1.module.orgName,
+          groupId = a._1.module.organization.value,
           artifactId = a._1.module.name.value,
           version = a._1.version
         ) -> a._4
