@@ -15,7 +15,12 @@ object App {
       case Array(groupId, artifactId, previous, current) =>
         val p = Library(groupId, artifactId, previous)
         val c = Library(groupId, artifactId, current)
-        runMima(previous = p, current = c)
+        val results = runMima(previous = p, current = c)
+        if (results.incompatibilities.forall(_.problems.isEmpty)) {
+          0
+        } else {
+          sys.error("Binary compatibility check failed!")
+        }
       case other =>
         Console.err.println(
           """invalid args
@@ -41,7 +46,7 @@ object App {
     backErrors: List[core.Problem],
     log: Logging,
     projectName: String
-  ): Boolean = {
+  ): Unit = {
     def prettyPrint(p: core.Problem, affected: String): String = {
       " * " + p.description(affected) + p.howToFilter.map("\n   filter with: " + _).getOrElse("")
     }
@@ -49,10 +54,9 @@ object App {
     println(s"$projectName: found ${backErrors.size} potential binary incompatibilities while checking against")
     backErrors.map { p: core.Problem => prettyPrint(p, "current") }.foreach { p => log.error(p) }
     println()
-    backErrors.isEmpty
   }
 
-  def runMima(previous: Library, current: Library): Int = {
+  def runMima(previous: Library, current: Library): MimaResult = {
     val previousFiles = previous.download().map { case (lib, f) => lib -> f }
     println(previousFiles.map("  " + _._2).mkString("previous files:\n", "\n", "\n"))
     val currentFiles = current.download()
@@ -66,7 +70,7 @@ object App {
       println(added.map("  " + _._2).mkString("new files:\n", "\n", "\n"))
     }
     val oldMap = previousFiles.map { case (k, v) => k.module -> (k.version -> v) }.toMap
-    val results = currentFiles.flatMap { x =>
+    val incompatibilities = currentFiles.flatMap { x =>
       oldMap.get(x._1.module).map(x -> _)
     }.filter { case ((newLib, _), (oldVersion, _)) =>
       newLib.version != oldVersion
@@ -81,12 +85,21 @@ object App {
         log = logger,
         projectName = s"${newLib.groupId} % ${newLib.artifactId} % ${oldVersion} => ${newLib.version}"
       )
+      MimaResult.Incompatibilities(
+        module = newLib.module,
+        previousVersion = oldVersion,
+        currentVersion = newLib.version,
+        problems = problems
+      )
     }
-    if (results.forall(identity)) {
-      0
-    } else {
-      sys.error("Binary compatibility check failed!")
-    }
+
+    MimaResult(
+      previous = previousFiles,
+      current = currentFiles,
+      removed = removed,
+      added = added,
+      incompatibilities = incompatibilities
+    )
   }
 
 }
