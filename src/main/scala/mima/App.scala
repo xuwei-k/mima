@@ -7,7 +7,32 @@ import com.typesafe.tools.mima.core.util.log.Logging
 object App {
 
   def main(args: Array[String]): Unit = {
-    run(args)
+    val m = makeMima()
+
+    Seq(
+      "https/repo.scala-sbt.org/scalasbt/sbt-plugin-releases/com.lightbend.sbt/sbt-javaagent/scala_2.12/sbt_1.0/0.1.6/jars/sbt-javaagent.jar" -> "https/repo1.maven.org/maven2/com/github/sbt/sbt-javaagent_2.12_1.0/0.1.8/sbt-javaagent-0.1.8.jar",
+      "https/repo.scala-sbt.org/scalasbt/sbt-plugin-releases/com.typesafe.sbt/sbt-js-engine/scala_2.12/sbt_1.0/1.2.3/jars/sbt-js-engine.jar" -> "https/repo1.maven.org/maven2/com/github/sbt/sbt-js-engine_2.12_1.0/1.3.0/sbt-js-engine_2.12_1.0-1.3.0.jar",
+      "https/repo.scala-sbt.org/scalasbt/sbt-plugin-releases/com.typesafe.sbt/sbt-web/scala_2.12/sbt_1.0/1.4.4/jars/sbt-web.jar" -> "https/repo1.maven.org/maven2/com/github/sbt/sbt-web_2.12_1.0/1.5.5/sbt-web_2.12_1.0-1.5.5.jar"
+    ).foreach { case (oldJar, newJar) =>
+      println(
+        m.collectProblems(
+          oldJarOrDir = new java.io.File(
+            scala.util.Properties.userHome,
+            s"Library/Caches/Coursier/v1/$oldJar"
+          ),
+          newJarOrDir = {
+            val f = new java.io.File(
+              scala.util.Properties.userHome,
+              s"Library/Caches/Coursier/v1/$newJar"
+            )
+            assert(f.isFile)
+            f
+          },
+          excludeAnnots = Nil
+        )
+      )
+    }
+
   }
 
   def run(args: Array[String]): Int = {
