@@ -21,6 +21,12 @@ object App {
         } else {
           sys.error("Binary compatibility check failed!")
         }
+      case Array(groupId, "%", artifactId, "%", version) =>
+        showFiles(Library(groupId, artifactId, version))
+        0
+      case Array(groupId, "%%", artifactId, "%", version) =>
+        showFiles(Library(groupId, s"${artifactId}_2.13", version))
+        0
       case other =>
         Console.err.println(
           """invalid args
@@ -29,6 +35,11 @@ object App {
         )
         -1
     }
+  }
+
+  private def showFiles(library: Library): Unit = {
+    val files = library.download().map { case (lib, f) => lib -> f }
+    println(files.map("  " + _._2).mkString("files:\n", "\n", "\n"))
   }
 
   private[this] val logger = new Logging {
