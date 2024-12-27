@@ -5,7 +5,7 @@ scalaVersion := "2.13.15"
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest-freespec" % "3.2.19" % Test,
   "com.typesafe" %% "mima-core" % "1.1.4",
-  "io.get-coursier" %% "coursier" % "2.1.22"
+  "io.get-coursier" %% "coursier" % "2.1.23"
 )
 
 organization := "com.github.xuwei-k"
