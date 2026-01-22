@@ -1,6 +1,6 @@
 name := "mima"
 
-scalaVersion := "2.13.18"
+scalaVersion := "3.8.1"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest-freespec" % "3.2.19" % Test,
