@@ -1,6 +1,6 @@
 # mima
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.xuwei-k/mima_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.xuwei-k/mima_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.xuwei-k/mima_2.13)](https://central.sonatype.com/artifact/com.github.xuwei-k/mima_2.13)
 
 
 ## install
