@@ -16,5 +16,5 @@ jobs:
       with:
         java-version: 8
         distribution: temurin
-    - uses: coursier/cache-action@v7
+    - uses: coursier/cache-action@v8
     - run: sbt scalafmtCheckAll scalafmtSbtCheck test
