@@ -28,7 +28,7 @@ publishTo := (
   if (isSnapshot.value)
     None
   else
-    Some(Opts.resolver.sonatypeStaging)
+    localStaging.value
 )
 
 enablePlugins(ConscriptPlugin)
@@ -87,10 +87,10 @@ releaseProcess := Seq[ReleaseStep](
   releaseStepTask(updateLaunchconfig),
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommand("publishSigned"),
+  releaseStepCommandAndRemaining("publishSigned"),
   setNextVersion,
   commitNextVersion,
-  releaseStepCommand("sonatypeReleaseAll"),
+  releaseStepCommandAndRemaining("sonaRelease"),
   pushChanges
 )
 
