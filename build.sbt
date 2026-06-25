@@ -33,25 +33,28 @@ publishTo := (
 
 enablePlugins(ConscriptPlugin)
 
+@transient
 val updateLaunchconfig = TaskKey[File]("updateLaunchconfig")
 val launchconfigFile = file("src/main/conscript/mima/launchconfig")
 
-TaskKey[Int]("testConscript") := Def
-  .sequential(
-    updateLaunchconfig,
-    csRun.toTask(" mima org.scalaz scalaz-core_2.11 7.1.0 7.1.1"),
-    Def.task {
-      sys.process.Process(s"git checkout ${launchconfigFile}").!
-    }
-  )
-  .value
+TaskKey[Int]("testConscript") := Def.uncached(
+  Def
+    .sequential(
+      updateLaunchconfig,
+      csRun.toTask(" mima org.scalaz scalaz-core_2.11 7.1.0 7.1.1"),
+      Def.task {
+        sys.process.Process(s"git checkout ${launchconfigFile}").!
+      }
+    )
+    .value
+)
 
 val tagName = Def.setting {
   s"v${if (releaseUseGlobalVersion.value) (ThisBuild / version).value else version.value}"
 }
 
 val tagOrHash = Def.setting {
-  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lineStream_!.head
+  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lazyLines_!.head
   else tagName.value
 }
 
