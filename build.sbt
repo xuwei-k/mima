@@ -4,7 +4,7 @@ scalaVersion := "2.13.18"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest-freespec" % "3.2.20" % Test,
-  "com.typesafe" %% "mima-core" % "1.1.6",
+  "com.typesafe" %% "mima-core" % "1.2.0",
   "io.get-coursier" %% "coursier" % "2.1.24"
 )
 
