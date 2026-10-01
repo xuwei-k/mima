@@ -69,13 +69,13 @@ class MimaTest extends AnyFreeSpec {
             module = current.module,
             previousVersion = previous.version,
             currentVersion = current.version,
-            problems = 49
+            problems = 41
           ),
           Incompatibilities(
             module = scalaLibrary,
             previousVersion = "2.13.1",
             currentVersion = "2.13.6",
-            problems = 187
+            problems = 21
           ),
           Incompatibilities(
             module = hocon,
@@ -132,7 +132,7 @@ class MimaTest extends AnyFreeSpec {
             module = scalaLibrary,
             previousVersion = "2.13.6",
             currentVersion = "2.13.1",
-            problems = 236
+            problems = 80
           ),
           Incompatibilities(
             module = hocon,
