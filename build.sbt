@@ -72,9 +72,8 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-unchecked",
   "-Xlint",
-  "-language:existentials",
-  "-language:higherKinds",
-  "-language:implicitConversions"
+  "-Werror",
+  "-Wunused"
 )
 
 releaseTagName := tagName.value

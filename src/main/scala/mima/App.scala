@@ -27,7 +27,7 @@ object App {
       case Array(groupId, "%%", artifactId, "%", version) =>
         showFiles(Library(groupId, s"${artifactId}_3", version))
         0
-      case other =>
+      case _ =>
         Console.err.println(
           """invalid args
           |usage:
