@@ -12,19 +12,21 @@ final case class Library(groupId: String, artifactId: String, version: String) {
 
   val coursierDependency = coursier.core.Dependency(
     module,
-    version
+    coursier.version.VersionConstraint(
+      version
+    )
   )
   def download(): Seq[(Library, File)] = {
     coursier
       .Fetch()
       .addDependencies(coursierDependency)
       .runResult()
-      .detailedArtifacts
+      .detailedArtifacts0
       .map(a =>
         Library(
           groupId = a._1.module.organization.value,
           artifactId = a._1.module.name.value,
-          version = a._1.version
+          version = a._1.versionConstraint.asString
         ) -> a._4
       )
   }
