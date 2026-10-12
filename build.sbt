@@ -9,8 +9,8 @@ libraryDependencies ++= Seq(
 )
 
 organization := "com.github.xuwei-k"
-licenses := Seq("MIT" -> url("https://opensource.org/licenses/mit-license"))
-homepage := some(url("https://github.com/xuwei-k/mima"))
+licenses := Seq("MIT" -> uri("https://opensource.org/licenses/mit-license"))
+homepage := some(uri("https://github.com/xuwei-k/mima"))
 pomExtra :=
   <scm>
     <url>git@github.com:xuwei-k/mima.git</url>
