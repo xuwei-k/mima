@@ -25,7 +25,7 @@ object App {
         showFiles(Library(groupId, artifactId, version))
         0
       case Array(groupId, "%%", artifactId, "%", version) =>
-        showFiles(Library(groupId, s"${artifactId}_2.13", version))
+        showFiles(Library(groupId, s"${artifactId}_3", version))
         0
       case other =>
         Console.err.println(
